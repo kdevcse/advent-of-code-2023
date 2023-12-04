@@ -1,0 +1,12 @@
+{
+  "name": "advent-of-code-day-1",
+  "module": "module",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.3",
+    "typescript": "^5.3.2"
+  }
+}
