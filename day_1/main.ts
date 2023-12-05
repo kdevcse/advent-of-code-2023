@@ -8,36 +8,6 @@ async function main() {
     console.log(`SUM: ${sum}`);
 }
 
-function findNumber(str: string) {
-    for(let i = 0; i < str.length; i++) {
-        let word = str[i];
-        let intFound = !isNaN(+word);
-
-        for (let j = i + 1; j < str.length; j++) {
-            // Number was found but not a number anymore
-            if (intFound && isNaN(+(word + str[j]))) {
-                return +word;
-            }
-
-            // increment
-            word += str[j];
-
-            // Actual number was found so no spell check
-            if (intFound) {
-                continue;
-            }
-
-            // Spells a number
-            const spellsNum = spellsAnumber(word);
-            if (spellsNum > -1) {
-                return spellsNum;
-            }
-        }
-    }
-
-    return -1;
-}
-
 function spellsAnumber(str: string) {
     switch(str.toLowerCase()) {
         case 'zero':
@@ -71,37 +41,20 @@ async function getData(filename: string) {
     const lines = contents.split(/\r?\n/);
 
     for(const line of lines) {
-        let firstVal: string;
-        let lastVal: string;
-        console.log(line);
+        console.log(`LINE: ${line}`);
 
+        // Cut out blank lines
         if (line.length <= 0) {
             continue;
         }
 
-        for(let i = 0; i < line.length; i++) {
-            let c = line[i];
-            const val = +c;
-            
-            if (isNaN(val)) {
-                const spellsNum = findNumber(line.substring(i));
+        const stuff = Array.from(line.matchAll(/(?=(zero|one|two|three|four|five|six|seven|eight|nine|\d))/g));
+        const firstMatch = stuff[0][1];
+        const firstVal = isNaN(+firstMatch) ? spellsAnumber(firstMatch) : +firstMatch[0];
+        const lastMatch = stuff[stuff.length - 1][1];
+        const lastVal = isNaN(+lastMatch) ? spellsAnumber(lastMatch) : +lastMatch[0];
+        const finalVal = +`${firstVal}${lastVal}`;
 
-                if (spellsNum < 0) {
-                    continue;
-                }
-
-                c = spellsNum.toString();
-            }
-
-            if (!firstVal) {
-                firstVal = c;
-                continue;
-            }
-
-            lastVal = c;
-        }
-
-        const finalVal = parseInt(`${firstVal}${lastVal}`);
         console.log(finalVal);
         vals.push(finalVal);
     };
